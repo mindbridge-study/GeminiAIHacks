@@ -54,5 +54,17 @@
 
 	<key>NSCameraUsageDescription</key>
 	<string>To capture profile photo please grant camera access</string>
+
+	<key>CFBundleURLTypes</key>
+	<array>
+	<dict>
+		<key>CFBundleTypeRole</key>
+		<string>Editor</string>
+		<key>CFBundleURLSchemes</key>
+		<array>
+		<string>com.googleusercontent.apps.your-client-id</string>
+		</array>
+	</dict>
+	</array>
 </dict>
 </plist>
