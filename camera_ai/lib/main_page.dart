@@ -5,57 +5,36 @@ import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:media_scanner/media_scanner.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final cameras = await availableCameras();
-  if (cameras.isEmpty) {
-    print('No cameras found');
-    return;
-  }
-  runApp(MyApp(cameras: cameras));
-}
-
-class MyApp extends StatelessWidget {
-  final List<CameraDescription> cameras;
-
-  const MyApp({super.key, required this.cameras});
+class CameraPage extends StatefulWidget {
+  const CameraPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: MainPage(cameras: cameras),
-    );
-  }
+  State<CameraPage> createState() => _CameraPageState();
 }
 
-class MainPage extends StatefulWidget {
-  final List<CameraDescription> cameras;
-
-  const MainPage({super.key, required this.cameras});
-
-  @override
-  State<MainPage> createState() => _MainPageState();
-}
-
-class _MainPageState extends State<MainPage> {
+class _CameraPageState extends State<CameraPage> {
   late CameraController cameraController;
   late Future<void> cameraValue;
   List<File> picList = [];
+  List<CameraDescription> cameras = [];
   bool flash = false;
   bool rear = true;
 
   Future<File> saveImage(XFile image) async {
-    final downloadPath = await ExternalPath.getExternalStoragePublicDirectory(
-        ExternalPath.DIRECTORY_DOWNLOADS);
-    final fileName = '${DateTime.now().millisecondsSinceEpoch}.png';
-    final file = File('$downloadPath/$fileName');
-
     try {
+      final downloadPath = await ExternalPath.getExternalStoragePublicDirectory(
+          ExternalPath.DIRECTORY_DOWNLOADS);
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}.png';
+      final file = File('$downloadPath/$fileName');
       await file.writeAsBytes(await image.readAsBytes());
-    } catch (_) {}
-
-    return file;
+      MediaScanner.loadMedia(path: file.path); // Ensure media is scanned
+      return file;
+    } catch (e) {
+      print('Error saving or scanning file: $e');
+      rethrow; // Optionally rethrow to handle the error upstream
+    }
   }
 
   void takePhoto() async {
@@ -88,17 +67,54 @@ class _MainPageState extends State<MainPage> {
 
   void startCamera(int cameraIndex) {
     cameraController = CameraController(
-      widget.cameras[cameraIndex],
+      cameras[cameraIndex],
       ResolutionPreset.high,
       enableAudio: false,
     );
     cameraValue = cameraController.initialize();
   }
 
+  void checkPermissionsAndStartCamera() async {
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    }
+
+    if (await Permission.storage.isGranted) {
+      // Now we can initialize the camera
+      findAvailableCameras();
+    } else {
+      print('Storage permission not granted');
+      // Handle the case when permission is not granted
+    }
+  }
+
+  void findAvailableCameras() async {
+    try {
+      cameras = await availableCameras();
+      if (cameras.isNotEmpty) {
+        setState(() {
+          startCamera(0);
+        }); // Call setState to update the UI with the available cameras
+      }
+    } catch (e) {
+      // Handle the error appropriately
+      print('Failed to get available cameras: $e');
+    }
+  }
+
   @override
   void initState() {
-    startCamera(0);
     super.initState();
+    checkPermissionsAndStartCamera();
+  }
+
+  @override
+  void dispose() {
+    if (cameraController.value.isInitialized) {
+      cameraController.dispose();
+    }
+    super.dispose();
   }
 
   @override
@@ -121,8 +137,12 @@ class _MainPageState extends State<MainPage> {
           FutureBuilder(
             future: cameraValue,
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                return SizedBox(
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                case ConnectionState.waiting:
+                  return const Center(child: CircularProgressIndicator());
+                case ConnectionState.done:
+                  return SizedBox(
                   width: size.width,
                   height: size.height,
                   child: FittedBox(
@@ -133,10 +153,11 @@ class _MainPageState extends State<MainPage> {
                     ),
                   ),
                 );
-              } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                default:
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  }
+                  return const Center(child: CircularProgressIndicator());
               }
             },
           ),
@@ -148,6 +169,24 @@ class _MainPageState extends State<MainPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pushNamed('/profile');
+                      },
+                      child: Container(
+                        decoration: const BoxDecoration(
+                            color: Colors.amber, shape: BoxShape.circle),
+                        child: const Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Icon(
+                            Icons.person,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Gap(10),
                     GestureDetector(
                       onTap: () {
                         setState(() {
@@ -174,8 +213,8 @@ class _MainPageState extends State<MainPage> {
                       onTap: () {
                         setState(() {
                           rear = !rear;
+                          startCamera(rear ? 0 : 1);
                         });
-                        rear ? startCamera(0) : startCamera(1);
                       },
                       child: Container(
                         decoration: const BoxDecoration(
@@ -222,7 +261,7 @@ class _MainPageState extends State<MainPage> {
                               child: Image(
                                 height: 100,
                                 width: 100,
-                                opacity: const AlwaysStoppedAnimation(07),
+                                opacity: const AlwaysStoppedAnimation(0.7),
                                 image: FileImage(File(picList[index].path)),
                                 fit: BoxFit.cover,
                               ),

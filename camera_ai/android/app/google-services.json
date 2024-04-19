@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "87900953374",
+    "project_id": "gemini-122e9",
+    "storage_bucket": "gemini-122e9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:87900953374:android:5c12f63baf61de5d58c70f",
+        "android_client_info": {
+          "package_name": "com.example.camera_ai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "87900953374-sehcf8lujuioo7uufcfvo5saeobm9uph.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqKij_ldMYpTRWapmqeU2HsVcnXiaYJOw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "87900953374-sehcf8lujuioo7uufcfvo5saeobm9uph.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "87900953374-lvcc3r9298bsffdi0kdtubedu2r8frpg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.cameraAi"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
