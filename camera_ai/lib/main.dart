@@ -44,6 +44,7 @@ class RootApp extends StatelessWidget {
                   icon: const Icon(Icons.exit_to_app),
                   onPressed: () {
                     FirebaseAuth.instance.signOut();
+                    Navigator.pushReplacementNamed(context, '/sign-in');
                   },
                 ),
               ],
