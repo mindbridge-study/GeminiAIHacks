@@ -16,7 +16,7 @@ class CameraPage extends StatefulWidget {
 
 class _CameraPageState extends State<CameraPage> {
   late CameraController cameraController;
-  late Future<void> cameraValue;
+  Future<void>? cameraValue;
   List<File> picList = [];
   List<CameraDescription> cameras = [];
   bool flash = false;
@@ -71,21 +71,45 @@ class _CameraPageState extends State<CameraPage> {
       ResolutionPreset.high,
       enableAudio: false,
     );
-    cameraValue = cameraController.initialize();
+    cameraValue = cameraController.initialize().then((_) {
+      setState(
+          () {}); // Ensure the camera is initialized before setting the state
+    });
   }
 
   void checkPermissionsAndStartCamera() async {
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      await Permission.storage.request();
-    }
+    if (Platform.isIOS || Platform.isAndroid) {
+      // Request permissions asynchronously in parallel to reduce wait time.
+      var storageStatusFuture = Permission.storage.status;
+      var cameraStatusFuture = Permission.camera.status;
 
-    if (await Permission.storage.isGranted) {
-      // Now we can initialize the camera
-      findAvailableCameras();
+      var storageStatus = await storageStatusFuture;
+      var cameraStatus = await cameraStatusFuture;
+
+      // Request permissions if not already granted
+      if (!cameraStatus.isGranted) {
+        cameraStatus = await Permission.camera.request();
+      }
+      if (!storageStatus.isGranted) {
+        storageStatus = await Permission.storage.request();
+      }
+
+      // Check if permissions are granted before proceeding
+      if (cameraStatus.isGranted && storageStatus.isGranted) {
+        // Permissions are granted, proceed to initialize the camera
+        findAvailableCameras();
+      } else {
+        // Handle the scenario when permissions are not granted
+        if (!cameraStatus.isGranted) {
+          print('Camera permission not granted');
+        }
+        if (!storageStatus.isGranted) {
+          print('Storage permission not granted');
+        }
+      }
     } else {
-      print('Storage permission not granted');
-      // Handle the case when permission is not granted
+      // For other platforms, directly find available cameras
+      findAvailableCameras();
     }
   }
 
@@ -143,16 +167,16 @@ class _CameraPageState extends State<CameraPage> {
                   return const Center(child: CircularProgressIndicator());
                 case ConnectionState.done:
                   return SizedBox(
-                  width: size.width,
-                  height: size.height,
-                  child: FittedBox(
-                    fit: BoxFit.cover,
-                    child: SizedBox(
-                      width: 100,
-                      child: CameraPreview(cameraController),
+                    width: size.width,
+                    height: size.height,
+                    child: FittedBox(
+                      fit: BoxFit.cover,
+                      child: SizedBox(
+                        width: 100,
+                        child: CameraPreview(cameraController),
+                      ),
                     ),
-                  ),
-                );
+                  );
                 default:
                   if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
