@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'dart:developer' as developer;
 import 'package:camera/camera.dart';
 import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +32,7 @@ class _CameraPageState extends State<CameraPage> {
       MediaScanner.loadMedia(path: file.path); // Ensure media is scanned
       return file;
     } catch (e) {
-      print('Error saving or scanning file: $e');
+      developer.log('Error saving or scanning file', error: e, name: 'CameraPage');
       rethrow; // Optionally rethrow to handle the error upstream
     }
   }
@@ -77,40 +77,31 @@ class _CameraPageState extends State<CameraPage> {
     });
   }
 
-  void checkPermissionsAndStartCamera() async {
+  Future<void> checkPermissionsAndStartCamera() async {
     if (Platform.isIOS || Platform.isAndroid) {
-      // Request permissions asynchronously in parallel to reduce wait time.
-      var storageStatusFuture = Permission.storage.status;
-      var cameraStatusFuture = Permission.camera.status;
+      final PermissionStatus storageStatus = await Permission.storage.status;
+      final PermissionStatus cameraStatus = await Permission.camera.status;
 
-      var storageStatus = await storageStatusFuture;
-      var cameraStatus = await cameraStatusFuture;
-
-      // Request permissions if not already granted
-      if (!cameraStatus.isGranted) {
-        cameraStatus = await Permission.camera.request();
-      }
       if (!storageStatus.isGranted) {
-        storageStatus = await Permission.storage.request();
+        final PermissionStatus permissionStatus =
+            await Permission.storage.request();
+        if (!permissionStatus.isGranted) {
+          developer.log('Storage permission not granted');
+          return;
+        }
       }
 
-      // Check if permissions are granted before proceeding
-      if (cameraStatus.isGranted && storageStatus.isGranted) {
-        // Permissions are granted, proceed to initialize the camera
-        findAvailableCameras();
-      } else {
-        // Handle the scenario when permissions are not granted
-        if (!cameraStatus.isGranted) {
-          print('Camera permission not granted');
-        }
-        if (!storageStatus.isGranted) {
-          print('Storage permission not granted');
+      if (!cameraStatus.isGranted) {
+        final PermissionStatus permissionStatus =
+            await Permission.camera.request();
+        if (!permissionStatus.isGranted) {
+          developer.log('Camera permission not granted');
+          return;
         }
       }
-    } else {
-      // For other platforms, directly find available cameras
-      findAvailableCameras();
     }
+
+    findAvailableCameras();
   }
 
   void findAvailableCameras() async {
@@ -123,7 +114,7 @@ class _CameraPageState extends State<CameraPage> {
       }
     } catch (e) {
       // Handle the error appropriately
-      print('Failed to get available cameras: $e');
+      developer.log('Failed to get available cameras:', error: e);
     }
   }
 
