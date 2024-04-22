@@ -14,8 +14,6 @@
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>Services ID</key>
-	<string>com.mindbridge.gemini.oauth</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -55,14 +53,6 @@
 	<string>App needs access to photo lib for profile images</string>
 	<key>NSCameraUsageDescription</key>
 	<string>To capture profile photo please grant camera access</string>
-	<key>Entitlements</key>
-	<dict>
-		<key>com.apple.developer.applesignin</key>
-		<array>
-			<string>petersonguo@gmail.com</string>
-			<string>Peterson Guo</string>
-		</array>
-	</dict>
 	<key>CFBundleURLTypes</key>
 	<array>
 	<dict>
@@ -71,7 +61,6 @@
 		<key>CFBundleURLSchemes</key>
 		<array>
 		<string>com.googleusercontent.apps.87900953374-lvcc3r9298bsffdi0kdtubedu2r8frpg</string>
-		<string>com.apple.developer.applesignin</string>
 		</array>
 	</dict>
 	</array>
