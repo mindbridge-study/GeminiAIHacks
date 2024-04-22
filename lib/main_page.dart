@@ -79,22 +79,32 @@ class _CameraPageState extends State<CameraPage> {
 
   Future<void> checkPermissionsAndStartCamera() async {
     if (Platform.isIOS || Platform.isAndroid) {
-      final PermissionStatus storageStatus = await Permission.storage.status;
       final PermissionStatus cameraStatus = await Permission.camera.status;
-
-      if (!storageStatus.isGranted) {
-        final PermissionStatus permissionStatus =
-            await Permission.storage.request();
-        if (!permissionStatus.isGranted) {
-          developer.log('Storage permission not granted');
-          return;
-        }
-      }
 
       if (!cameraStatus.isGranted) {
         final PermissionStatus permissionStatus =
             await Permission.camera.request();
-        if (!permissionStatus.isGranted) {
+        if (permissionStatus.isGranted) {
+          developer.log('Camera permission granted');
+          final PermissionStatus storageStatus =
+              await Permission.storage.status;
+          if (!storageStatus.isGranted) {
+            final PermissionStatus permissionStatus =
+                await Permission.storage.request();
+            if (permissionStatus.isGranted) {
+              developer.log('Storage permission granted');
+            } else if (permissionStatus.isPermanentlyDenied) {
+              developer.log('Storage permission permanently denied');
+              return;
+            } else if (!permissionStatus.isGranted) {
+              developer.log('Storage permission not granted');
+              return;
+            }
+          }
+        } else if (permissionStatus.isPermanentlyDenied) {
+          developer.log('Camera permission permanently denied');
+          return;
+        } else if (!permissionStatus.isGranted) {
           developer.log('Camera permission not granted');
           return;
         }
@@ -105,6 +115,7 @@ class _CameraPageState extends State<CameraPage> {
   }
 
   void findAvailableCameras() async {
+    WidgetsFlutterBinding.ensureInitialized();
     try {
       cameras = await availableCameras();
       if (cameras.isNotEmpty) {

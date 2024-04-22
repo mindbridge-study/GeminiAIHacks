@@ -64,8 +64,9 @@ class DefaultFirebaseOptions {
     messagingSenderId: '87900953374',
     projectId: 'gemini-122e9',
     storageBucket: 'gemini-122e9.appspot.com',
-    iosClientId: '87900953374-lvcc3r9298bsffdi0kdtubedu2r8frpg.apps.googleusercontent.com',
-    iosBundleId: 'com.example.cameraAi',
+    iosClientId:
+        '87900953374-lvcc3r9298bsffdi0kdtubedu2r8frpg.apps.googleusercontent.com',
+    iosBundleId: 'com.mindbridge.gemini',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -74,8 +75,9 @@ class DefaultFirebaseOptions {
     messagingSenderId: '87900953374',
     projectId: 'gemini-122e9',
     storageBucket: 'gemini-122e9.appspot.com',
-    iosClientId: '87900953374-lvcc3r9298bsffdi0kdtubedu2r8frpg.apps.googleusercontent.com',
-    iosBundleId: 'com.example.cameraAi',
+    iosClientId:
+        '87900953374-lvcc3r9298bsffdi0kdtubedu2r8frpg.apps.googleusercontent.com',
+    iosBundleId: 'com.mindbridge.gemini',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
@@ -87,5 +89,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'gemini-122e9.appspot.com',
     measurementId: 'G-GKCY6ZCVGN',
   );
-
 }

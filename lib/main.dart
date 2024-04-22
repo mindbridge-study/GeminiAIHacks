@@ -38,8 +38,7 @@ class RootApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute:
-          FirebaseAuth.instance.currentUser == null ? '/sign-in' : '/',
+      initialRoute: '/sign-in',
       routes: {
         '/sign-in': (context) {
           return SignInScreen(

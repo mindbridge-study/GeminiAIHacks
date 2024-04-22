@@ -3,9 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>87900953374-lvcc3r9298bsffdi0kdtubedu2r8frpg.apps.googleusercontent.com</string>
+	<string>87900953374-1manlh4lc6jj79u6md3qkgskdppajdmg.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.87900953374-lvcc3r9298bsffdi0kdtubedu2r8frpg</string>
+	<string>com.googleusercontent.apps.87900953374-1manlh4lc6jj79u6md3qkgskdppajdmg</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>87900953374-f1ur3n5vofrhjlhb2r9rsv2rc0st63q6.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyBVN-lPsWzz08aqmmmGw5LvZk_fPZghQuk</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.cameraAi</string>
+	<string>com.mindbridge.gemini</string>
 	<key>PROJECT_ID</key>
 	<string>gemini-122e9</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:87900953374:ios:7c877370143876b658c70f</string>
+	<string>1:87900953374:ios:5ded56d70703709c58c70f</string>
 </dict>
 </plist>

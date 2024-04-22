@@ -1,4 +1,4 @@
-package com.example.camera_ai
+package com.mindbridge.gemini
 
 import io.flutter.embedding.android.FlutterActivity
 
