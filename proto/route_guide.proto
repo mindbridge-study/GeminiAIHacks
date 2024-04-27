@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package routeguide;
+
+option java_multiple_files = true;
+option java_package = "io.grpc.examples.routeguide";
+option java_outer_classname = "RouteGuideProto";
+option objc_class_prefix = "RTG";
+
+// Interface exported by the server.
+service RouteGuide {
+  rpc Ping (PingRequest) returns (PingResponse) {}
+  rpc UploadImage(stream ImageChunk) returns (UploadStatus) {}
+  rpc BidirectionalImageTransfer(stream ImageChunk) 
+    returns (stream ImageChunk) {}
+}
+
+message ImageChunk {
+  bytes data = 1;
+}
+
+message UploadStatus {
+  bool success = 1;
+  string message = 2;
+}
+
+message PingRequest {
+  string data = 1;
+}
+
+message PingResponse {
+  string data = 1;
+}
