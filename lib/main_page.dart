@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:media_scanner/media_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:gal/gal.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key});
@@ -61,6 +62,7 @@ class _CameraPageState extends State<CameraPage> {
     setState(() {
       picList.add(file);
     });
+    await Gal.putImage(file.path);
 
     MediaScanner.loadMedia(path: file.path);
   }
