@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:developer' as developer;
+import 'photo_gallary_page.dart';
 import 'package:camera/camera.dart';
 import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
@@ -259,7 +260,34 @@ class _CameraPageState extends State<CameraPage> {
                         ),
                       ),
                     ),
+                      const Gap(10),
+                      GestureDetector(
+                        onTap: () {
+                            Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PhotoGallaryPage(picList: picList),
+                            ),
+                          );
+                        },
+                        child: Container(
+                        decoration: const BoxDecoration(
+                        color: Colors.amber, shape: BoxShape.circle),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: rear
+                              ? const Icon(
+                                  Icons.photo_album,
+                                  color: Colors.white,
+                                  size: 30,
+                                )
+                              : const Icon(Icons.camera_front),
+                        ),
+                      ),
+                      )
+                
                   ],
+
                 ),
               ),
             ),
