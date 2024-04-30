@@ -10,7 +10,6 @@
         android:requestLegacyExternalStorage="true"
         >
         <activity
-            android:requestLegacyExternalStorage="true"
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
