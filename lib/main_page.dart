@@ -215,7 +215,7 @@ class _CameraPageState extends State<CameraPage> {
                         ),
                       ),
                     ),
-                    const Gap(10),
+                    const SizedBox(height: 10),
                     GestureDetector(
                       onTap: () {
                         setState(() {
@@ -237,7 +237,7 @@ class _CameraPageState extends State<CameraPage> {
                         ),
                       ),
                     ),
-                    const Gap(10),
+                    const SizedBox(height: 10),
                     GestureDetector(
                       onTap: () {
                         setState(() {
@@ -260,19 +260,22 @@ class _CameraPageState extends State<CameraPage> {
                         ),
                       ),
                     ),
-                      const Gap(10),
-                      GestureDetector(
-                        onTap: () {
-                            Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PhotoGallaryPage(picList: picList),
-                            ),
-                          );
-                        },
-                        child: Container(
+                    const SizedBox(height: 10),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                PhotoGallaryPage(picList: picList),
+                          ),
+                        );
+                      },
+                      child: Container(
                         decoration: const BoxDecoration(
-                        color: Colors.amber, shape: BoxShape.circle),
+                          color: Colors.amber,
+                          shape: BoxShape.circle,
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.all(10),
                           child: rear
@@ -284,55 +287,47 @@ class _CameraPageState extends State<CameraPage> {
                               : const Icon(Icons.camera_front),
                         ),
                       ),
-                      )
-                
+                    ),
                   ],
-
                 ),
               ),
             ),
           ),
           Align(
-            alignment: Alignment.bottomLeft,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 7, bottom: 75),
-                    child: Container(
-                      height: 100,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10)),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: picList.length,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(2),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image(
-                                height: 100,
-                                width: 100,
-                                opacity: const AlwaysStoppedAnimation(0.7),
-                                image: FileImage(File(picList[index].path)),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          );
-                        },
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 75),
+              child: FutureBuilder(
+                future: fetchText(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting ||
+                      snapshot.data == null) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        snapshot.data.toString(),
+                        style: TextStyle(fontSize: 18, color: const Color.fromARGB(255, 255, 255, 255)),
+                        textAlign: TextAlign.center,
                       ),
-                    ),
-                  ),
-                ),
-              ],
+                    );
+                  }
+                },
+              ),
             ),
-          )
+          ),
         ],
       ),
     );
+  }
+
+
+
+  Future<String> fetchText() async { // Omar change this so it returns the AI output lol
+    await Future.delayed(Duration(seconds: 7));
+    return "sample text";
   }
 }
