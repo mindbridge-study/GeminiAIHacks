@@ -9,7 +9,7 @@ import 'package:media_scanner/media_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:gal/gal.dart';
 
-import 'package:camera_ai/grpc_connect.dart'
+import 'package:camera_ai/grpc_connect.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key});
@@ -25,7 +25,7 @@ class _CameraPageState extends State<CameraPage> {
   List<CameraDescription> cameras = [];
   bool flash = false;
   bool rear = true;
-  XFile
+  Client client = Client();
 
   Future<File> saveImage(XFile image) async {
     try {
@@ -337,7 +337,7 @@ class _CameraPageState extends State<CameraPage> {
       File jpegFile = await saveImage(image);
 
       // Upload the JPEG image
-      await runUploadImage(jpegFile);
+      await client.runUploadImage(jpegFile);
 
       return "Image uploaded successfully";
     } catch (e) {
