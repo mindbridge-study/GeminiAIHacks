@@ -9,6 +9,8 @@ import 'package:media_scanner/media_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:gal/gal.dart';
 
+import 'package:camera_ai/grpc_connect.dart'
+
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key});
 
@@ -23,14 +25,16 @@ class _CameraPageState extends State<CameraPage> {
   List<CameraDescription> cameras = [];
   bool flash = false;
   bool rear = true;
+  XFile
 
   Future<File> saveImage(XFile image) async {
     try {
       final downloadPath = await ExternalPath.getExternalStoragePublicDirectory(
           ExternalPath.DIRECTORY_DOWNLOADS);
-      final fileName = '${DateTime.now().millisecondsSinceEpoch}.png';
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpeg'; // Changed to .jpeg
       final file = File('$downloadPath/$fileName');
-      await file.writeAsBytes(await image.readAsBytes());
+      final bytes = await image.readAsBytes();
+      await file.writeAsBytes(bytes); // Directly write bytes since JPEG conversion should ideally occur earlier if required
       MediaScanner.loadMedia(path: file.path); // Ensure media is scanned
       return file;
     } catch (e) {
@@ -324,10 +328,21 @@ class _CameraPageState extends State<CameraPage> {
     );
   }
 
+  Future<String> fetchText() async {
+    try {
+      // Capture image using the camera
+      XFile? image = await cameraController.takePicture();
 
+      // Save the image as JPEG
+      File jpegFile = await saveImage(image);
 
-  Future<String> fetchText() async { // Omar change this so it returns the AI output lol
-    await Future.delayed(Duration(seconds: 7));
-    return "sample text";
+      // Upload the JPEG image
+      await runUploadImage(jpegFile);
+
+      return "Image uploaded successfully";
+    } catch (e) {
+      developer.log('Error in fetching text', error: e, name: 'CameraPage');
+      return "Error in processing image";
+    }
   }
 }

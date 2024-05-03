@@ -29,10 +29,11 @@ class Client {
     return response.data == 'Hello Client!';
   }
 
-  Future<void> runUploadImage(XFile imageFile) async {
-    Stream<ImageChunk> generateImageChunks(XFile file) async* {
+  Future<void> runUploadImage(File imageFile) async {
+    // Converts File to Stream<ImageChunk> for gRPC streaming
+    Stream<ImageChunk> generateImageChunks(File file) async* {
       final fileStream = file.openRead();
-      const chunkSize = 1024;
+      const chunkSize = 1024; // Size of each chunk
 
       await for (final chunk in fileStream) {
         yield ImageChunk(
